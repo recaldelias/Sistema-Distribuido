@@ -21,5 +21,5 @@ Realizar la investigación sobre WebSockets, un diseño y desarrollo de sistemas
 - Fecha tope: 29 de agosto 2021.
 -
 ## Referencias 
-https://datatracker.ietf.org/doc/html/rfc6455
-https://websockets.readthedocs.io/en/stable/intro.html 
+- https://datatracker.ietf.org/doc/html/rfc6455
+- https://websockets.readthedocs.io/en/stable/intro.html 
