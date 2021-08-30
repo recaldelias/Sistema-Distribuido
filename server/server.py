@@ -85,8 +85,8 @@ async def hello(websocket, path):
             if a!=-1:
                 while(salir!=True):
                     send="Que desea hacer?:\n\t1 Para ver estado\n\t2 Para crear cama \n\t3 Para eliminar cama\n\t4 Para ocupar una cama\n\t5 Para Desocupar una cama\n\t6 Para cambiar a otro hospital\n\t7 Ver Menu\n\texit para cortar la conexion"
-                    
-                    
+                    await websocket.send(send)
+                    consulta = await websocket.recv()
                     if consulta=='1':
                         send=a.imprimir()
                     elif consulta=='2':
