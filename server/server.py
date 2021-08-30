@@ -3,14 +3,14 @@
 # WS server example
 
 import asyncio
-from asyncio.windows_events import NULL
+# from asyncio.windows_events import NULL
 import websockets
-import json
+
 
 import random
 from datetime import datetime
 
-NMAX=10
+NMAX=50
 
 class Hospital:
     def __init__(self,id,nombre,cantidadcamas,estadocamas):
@@ -32,8 +32,11 @@ class Hospital:
         self.cantidadcamas+=1
         self.estadocamas.append("desocupado")
     def cambiarestadocama(self,i):
-        if self.estadocamas[i]=='desocupado': self.estadocamas[i]='ocupado'
-        else: self.estadocamas[i]='desocupado'
+        if( i < self.cantidadcamas):
+            if self.estadocamas[i]=='desocupado': self.estadocamas[i]='ocupado'
+            else: self.estadocamas[i]='desocupado'
+        else:
+            return -1
     def eliminarcama(self,i):
         self.cantidadcamas-=1
         self.estadocamas=self.estadocamas[0:i-1]+self.estadocamas[i+1:]
@@ -50,42 +53,15 @@ def crearhospital(i):
 
 def buscar(list,consulta):
     for i in list:
-        if i.nombre==consulta:
+        if i.id==consulta-1:
             return i
     return -1
-
-
 
 
     
 BDhospitales=[]
 for i in range(NMAX):
     BDhospitales.append(crearhospital(i))
-
-jsonlist=[]
-for i in BDhospitales:
-    jsonlist.append(json.dumps(i.__dict__))
-
-#print(jsonlist[4])
-
-hospital_dict = json.loads(jsonlist[4])
-hospital_object = Hospital(**hospital_dict)
-
-#hospital_object.imprimir()
-
-# for i in BDhospitales:
-#     if i.id==7:
-#         i.imprimir()
-#         i.agregarcama()
-#         i.cambiarestadocama(0)
-
-# print()
-# for j in BDhospitales:
-#     if j.id==7:
-#         j.imprimir()
-
-
-
 
 async def hello(websocket, path):
     f=open("log.txt",'a+')
@@ -103,9 +79,9 @@ async def hello(websocket, path):
             await websocket.send(hospitales+"\nQue desea hacer?:\n\t1 Para ver el estado de todos los hospitales\n\t2 Para ver un hospital en especifico\n\texit para cortar la conexion")
         elif(query=='2'):
             salir=False
-            await websocket.send("Envie el nombre del hospital hospital(1-50)")
+            await websocket.send("Envie el numero del hospital(1-50)")
             consulta = await websocket.recv()
-            a=buscar(BDhospitales,consulta) 
+            a=buscar(BDhospitales,int(consulta)) 
             if a!=-1:
                 while(salir!=True):
                     send="Que desea hacer?:\n\t1 Para ver estado\n\t2 Para crear cama \n\t3 Para eliminar cama\n\t4 Para ocupar una cama\n\t5 Para Desocupar una cama\n\t6 Para cambiar a otro hospital\n\t7 Ver Menu\n\texit para cortar la conexion"
@@ -130,17 +106,32 @@ async def hello(websocket, path):
                     elif consulta=='4':
                         await websocket.send(a.imprimir()+"\nQue cama desea ocupar?")
                         respuesta= await websocket.recv()
-                        a.cambiarestadocama(int(respuesta))
-                        now = datetime.now()
-                        f.write('tipo_3, 0, Se ocupo la cama'+respuesta+ ',' +now.strftime("%d/%m/%Y %H:%M:%S")+"\n")
-                        send='Se ocupo la cama nro '+respuesta+' Utilize la opcion 1 para ver los cambios'
+                        b=a.cambiarestadocama(int(respuesta))
+                        if (b == -1):
+                            now = datetime.now()
+                            f.write('tipo_4, -1, No existe esa cama, '+now.strftime("%d/%m/%Y %H:%M:%S")+"\n")
+                            # await websocket.send("Esa cama no existe\n")
+                            # respuesta= await websocket.recv()
+                            send = "Esa cama no existe"
+                        else:
+                            now = datetime.now()
+                            f.write('tipo_4, 0, Se ocupo la cama'+respuesta+ ',' +now.strftime("%d/%m/%Y %H:%M:%S")+"\n")
+                            send='Se ocupo la cama nro '+respuesta+' Utilize la opcion 1 para ver los cambios'
                     elif consulta=='5':
                         await websocket.send(a.imprimir()+"\nQue cama desea desocupar?")
                         respuesta= await websocket.recv()
-                        a.cambiarestadocama(int(respuesta))
-                        send='Se desocupo la cama nro '+respuesta+' Utilize la opcion 1 para ver los cambios'
-                        now = datetime.now()
-                        f.write('tipo_3, 0, Se libero la cama'+respuesta+ ',' +now.strftime("%d/%m/%Y %H:%M:%S")+"\n")
+                        b=a.cambiarestadocama(int(respuesta))
+                        print(b)
+                        if (b == -1):
+                            now = datetime.now()
+                            f.write('tipo_5, -1, No existe esa cama, '+now.strftime("%d/%m/%Y %H:%M:%S")+"\n")
+                            # await websocket.send("Esa cama no existe\n")
+                            # respuesta= await websocket.recv()
+                            send = "Esa cama no existe"
+                        else:
+                            now = datetime.now()
+                            f.write('tipo_5, 0, Se ocupo la cama'+respuesta+ ',' +now.strftime("%d/%m/%Y %H:%M:%S")+"\n")
+                            send='Se desocupo la cama nro '+respuesta+' Utilize la opcion 1 para ver los cambios'                       
                     elif consulta=='6':
                         salir=True
                         send=""
