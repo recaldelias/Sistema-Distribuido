@@ -15,6 +15,29 @@ Realizar la investigación sobre WebSockets, un diseño y desarrollo de sistemas
 - Comprender los desafíos en el proceso de desarrollo de integración de sistemas
 - Desarrollar e implementar sistemas utilizando flujos de comunicación entre procesos.
 
+## Requerimientos de instalación 
+
+-Instalar python3
+https://www.python.org/downloads/
+
+-Instalar websockets 
+```
+$ pip install websockets
+```
+## Cómo ejecutar los componentes de cada servidor
+- Ejecutar el archivo _server.py_ que se encuetra en la carpeta server.
+
+## Cómo ejecutar el/ los clientes
+- Ejecutar el archivo _cliente.py_ que se encuentra en la carpeta client.
+
+## Documentación de un API de servicios ofrecidos por el Servidor.
+### Servicios ofrecidos por el servidor
+- Ver estado: Permite ver el estado de todos los hospitales y de sus camas.
+- Crear cama: Permite añadir una cama a la base de datos.
+- Eliminar cama: Permite eliminar una cama en la base de datos.
+- Ocupar cama: Se marca como ocupado una cama en la base de datos.
+- Desocupar cama: Se marca como desocupado una cama en la base datos.
+
 ## Forma de entrega
 - Un solo integrante del grupo deberá completar con texto en línea en esta actividad de Educa.
 - Debe escribir indicando el repositorio GIT de la tarea donde se encuentre todo lo solicitado.
