@@ -8,6 +8,7 @@ import json
 async def hello():
     async with websockets.connect('ws://localhost:8765') as websocket:
 	print("Modificacion para El primer parcial")
+	print("Modificacion hecho por David Veron del primer parcial")
         name=""
         while name!= "exit":
             
